@@ -1,9 +1,6 @@
-const { version: nodeVersion } = require('process')
-
 const findUp = require('find-up')
 const pathExists = require('path-exists')
 const resolveLib = require('resolve')
-const { lt: ltVersion } = require('semver')
 
 // Find the path to a module's `package.json`
 // We need to use `resolve` instead of `require.resolve()` because:
@@ -23,10 +20,6 @@ const resolvePackage = async function (moduleName, basedir) {
   try {
     return await resolvePathPreserveSymlinks(`${moduleName}/package.json`, basedir)
   } catch (error) {
-    if (ltVersion(nodeVersion, REQUEST_RESOLVE_MIN_VERSION)) {
-      throw error
-    }
-
     try {
       return resolvePathFollowSymlinks(`${moduleName}/package.json`, basedir)
     } catch (error_) {
@@ -34,10 +27,6 @@ const resolvePackage = async function (moduleName, basedir) {
     }
   }
 }
-
-// TODO: remove after dropping support for Node <8.9.0
-// `require.resolve()` option `paths` was introduced in Node 8.9.0
-const REQUEST_RESOLVE_MIN_VERSION = '8.9.0'
 
 // We need to use `new Promise()` due to a bug with `utils.promisify()` on
 // `resolve`:
