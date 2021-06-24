@@ -121,6 +121,15 @@ The following properties are accepted:
   - `12.x` (or `nodejs12.x`)
   - `14.x` (or `nodejs14.x`)
 
+- `processDynamicNodeImports`
+
+  - _Type_: `boolean`
+  - _Default value_: `false`
+
+  When enabled, zip-it-and-ship-it will attempt to process `require` and `import` statements containing dynamic
+  expressions and include in the bundle all the files that can be referenced by it, making the expression work at
+  runtime.
+
 #### `parallelLimit`
 
 - _Type_: `number`\
