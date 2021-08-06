@@ -1770,3 +1770,26 @@ test('Creates a manifest file with the list of created functions if the `manifes
   // The `path` property of each function must be an absolute path.
   manifest.functions.every(({ path }) => isAbsolute(path))
 })
+
+test('Zips Python function files', async (t) => {
+  const { files, tmpDir } = await zipFixture(t, 'python-simple', {
+    length: 1,
+    opts: {
+      featureFlags: {
+        buildPythonSource: true,
+      },
+    },
+  })
+
+  t.true(files.every(({ runtime }) => runtime === 'py'))
+
+  await unzipFiles(files)
+
+  const mainFile = await pReadFile(`${tmpDir}/py-func.py`, 'utf8')
+  const supportingFile = await pReadFile(`${tmpDir}/supporting-file.py`, 'utf8')
+  const toolchainFile = await pReadFile(`${tmpDir}/netlify-toolchain`, 'utf8')
+
+  t.is(mainFile.trim(), '# Py main file')
+  t.is(supportingFile.trim(), '# Py supporting file')
+  t.is(JSON.parse(toolchainFile).runtime, 'py')
+})
