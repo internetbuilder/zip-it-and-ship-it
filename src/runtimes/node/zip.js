@@ -12,8 +12,8 @@ const unixify = require('unixify')
 
 const { startZip, addZipFile, addZipContent, endZip } = require('../../archive')
 const { ARCHIVE_FORMAT_ZIP } = require('../../utils/consts')
+const { addStat } = require('../../utils/fs')
 
-const pStat = promisify(fs.stat)
 const pWriteFile = promisify(fs.writeFile)
 
 // Taken from https://www.npmjs.com/package/cpy.
@@ -128,11 +128,6 @@ const addEntryFileToZip = function (archive, { contents, filename }) {
   const contentBuffer = Buffer.from(contents)
 
   addZipContent(archive, contentBuffer, filename)
-}
-
-const addStat = async function (srcFile) {
-  const stat = await pStat(srcFile)
-  return { srcFile, stat }
 }
 
 const getEntryFile = ({ commonPrefix, filename, mainFile, userNamespace }) => {

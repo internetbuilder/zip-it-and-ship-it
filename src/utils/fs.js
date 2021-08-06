@@ -1,12 +1,19 @@
-const { lstat, readdir, readFile, unlink, writeFile } = require('fs')
+const { lstat, readdir, readFile, stat, unlink, writeFile } = require('fs')
 const { format, join, parse, resolve } = require('path')
 const { promisify } = require('util')
 
 const pLstat = promisify(lstat)
 const pReaddir = promisify(readdir)
 const pReadFile = promisify(readFile)
+const pStat = promisify(stat)
 const pUnlink = promisify(unlink)
 const pWriteFile = promisify(writeFile)
+
+const addStat = async (srcFile) => {
+  const stats = await pStat(srcFile)
+
+  return { srcFile, stat: stats }
+}
 
 // This caches multiple FS calls to the same path. It creates a cache key with
 // the name of the function and the path (e.g. "readdir:/some/directory").
@@ -75,6 +82,7 @@ const resolveFunctionsDirectories = (input) => {
 }
 
 module.exports = {
+  addStat,
   cachedLstat,
   cachedReaddir,
   cachedReadFile,
