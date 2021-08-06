@@ -4,6 +4,7 @@ const { getConfigForFunction } = require('../config')
 
 const goRuntime = require('./go')
 const jsRuntime = require('./node')
+const pythonRuntime = require('./python')
 const rustRuntime = require('./rust')
 
 /**
@@ -56,10 +57,10 @@ const getFunctionsFromPaths = async (paths, { config, dedupe = false, featureFla
   // contents) without duplicating work.
   const fsCache = {}
 
-  // The order of this array determines the priority of the runtimes. If a path
-  // is used by the first time, it won't be made available to the subsequent
+  // The order of this array determines the priority of the runtimes. Once a
+  // path is claimed by a runtime, it won't be made available to the subsequent
   // runtimes.
-  const runtimes = [jsRuntime, goRuntime, rustRuntime]
+  const runtimes = [jsRuntime, pythonRuntime, goRuntime, rustRuntime]
 
   // We cycle through the ordered array of runtimes, passing each one of them
   // through `findFunctionsInRuntime`. For each iteration, we collect all the

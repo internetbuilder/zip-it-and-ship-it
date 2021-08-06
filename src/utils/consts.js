@@ -6,5 +6,6 @@ module.exports = {
   JS_BUNDLER_ZISI: 'zisi',
   RUNTIME_GO: 'go',
   RUNTIME_JS: 'js',
+  RUNTIME_PYTHON: 'py',
   RUNTIME_RUST: 'rs',
 }
