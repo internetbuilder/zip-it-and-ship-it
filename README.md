@@ -193,6 +193,10 @@ properties.
 
   Either `"js"`, `"go"`, or `"rs"`.
 
+- `size`: `number`
+
+  The size of the generated archive, in bytes.
+
 Additionally, the following properties also exist for Node.js functions:
 
 - `bundler`: `string`
