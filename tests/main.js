@@ -1553,7 +1553,7 @@ test('The dynamic import runtime shim handles files in nested directories', asyn
   t.throws(() => func('fr'))
 })
 
-test('The dynamic import runtime shim handles files in nested directories when using `archiveType: "none"`', async (t) => {
+test('The dynamic import runtime shim handles files in nested directories when using `archiveFormat: "none"`', async (t) => {
   const fixtureName = 'node-module-dynamic-import-4'
   const { tmpDir } = await zipNode(t, fixtureName, {
     opts: {
@@ -1945,4 +1945,13 @@ test('Creates a manifest file with the list of created functions if the `manifes
     t.is(fn.runtime, file.runtime)
     t.is(fn.path, file.path)
   })
+})
+
+test('Returns a `size` property with the size of each generated archive', async (t) => {
+  const FUNCTIONS_COUNT = 6
+  const { files } = await zipNode(t, 'many-functions', {
+    length: FUNCTIONS_COUNT,
+  })
+
+  files.every(({ size }) => Number.isInteger(size) && size > 0)
 })
