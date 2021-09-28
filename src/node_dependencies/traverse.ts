@@ -9,7 +9,7 @@ import { getSideFiles } from './side_files'
 
 const EXCLUDED_MODULES = new Set(['aws-sdk'])
 
-interface State {
+export interface State {
   localFiles: Set<string>
   moduleNames: Set<string>
   modulePaths: Set<string>
@@ -56,7 +56,7 @@ export const getDependencyNamesAndPathsForDependencies = async function ({
 }: {
   dependencies: string[]
   basedir: string
-  state: State
+  state?: State
   pluginsModulesPath?: string
 }) {
   const packageJson = await getPackageJson(basedir)

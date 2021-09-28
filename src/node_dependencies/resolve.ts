@@ -45,14 +45,14 @@ const REQUEST_RESOLVE_MIN_VERSION = '8.9.0'
 // `resolve`:
 //   https://github.com/browserify/resolve/issues/151#issuecomment-368210310
 const resolvePathPreserveSymlinksForDir = function (path: string, basedir: string) {
-  return new Promise<string | undefined>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     // eslint-disable-next-line promise/prefer-await-to-callbacks
     resolveLib(path, { basedir, preserveSymlinks: true }, (error, resolvedLocation) => {
       if (error) {
         return reject(error)
       }
 
-      resolve(resolvedLocation)
+      resolve(resolvedLocation!)
     })
   })
 }
@@ -60,7 +60,7 @@ const resolvePathPreserveSymlinksForDir = function (path: string, basedir: strin
 // the resolve library has a `paths` option but it's not the same as multiple basedirs
 // see https://github.com/browserify/resolve/issues/188#issuecomment-679010477
 // we return the first resolved location or the first error if all failed
-export const resolvePathPreserveSymlinks = async function (path: string, baseDirs: string[]) {
+export const resolvePathPreserveSymlinks = async function (path: string, baseDirs: string[]): Promise<string> {
   let firstError: any
   for (const basedir of baseDirs) {
     try {

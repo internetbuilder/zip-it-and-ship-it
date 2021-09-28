@@ -3,3 +3,13 @@ declare module 'require-package-name' {
 
   export default requirePackageName
 }
+
+declare module 'precinct' {
+  interface PrecinctConfig {
+    type?: string
+  }
+  export function paperwork(
+    filepath: string,
+    options?: PrecinctConfig & { includeCore?: boolean; fileSystem?: import('fs') },
+  ): string[]
+}

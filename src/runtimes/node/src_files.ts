@@ -1,19 +1,19 @@
-const { normalize } = require('path')
-const { promisify } = require('util')
-
-const glob = require('glob')
+import { normalize } from 'path'
+import { promisify } from 'util'
+import type { Stats } from 'fs'
+import glob from 'glob'
 
 const pGlob = promisify(glob)
 
-const { getDependencyNamesAndPathsForDependencies, listFilesUsingLegacyBundler } = require('../../node_dependencies')
-const { JS_BUNDLER_ZISI } = require('../../utils/consts')
+import { getDependencyNamesAndPathsForDependencies, listFilesUsingLegacyBundler } from '../../node_dependencies'
+import { JS_BUNDLER_ZISI } from '../../utils/consts'
 
-const getPathsOfIncludedFiles = async (includedFiles, basePath) => {
+const getPathsOfIncludedFiles = async (includedFiles: string[], basePath?: string) => {
   // Some of the globs in `includedFiles` might be exclusion patterns, which
   // means paths that should NOT be included in the bundle. We need to treat
   // these differently, so we iterate on the array and put those paths in a
   // `exclude` array and the rest of the paths in an `include` array.
-  const { include, exclude } = includedFiles.reduce(
+  const { include, exclude } = includedFiles.reduce<{ include: string[]; exclude: string[] }>(
     (acc, path) => {
       if (path.startsWith('!')) {
         return {
@@ -41,7 +41,10 @@ const getPathsOfIncludedFiles = async (includedFiles, basePath) => {
   return [...new Set(normalizedPaths)]
 }
 
-const getSrcFiles = async function ({ config, ...parameters }) {
+export const getSrcFiles = async function ({
+  config,
+  ...parameters
+}: GetSrcFilesAndExternalModulesConfig & { config: { nodeBundler?: string; externalNodeModules?: string[] } }) {
   const { paths } = await getSrcFilesAndExternalModules({
     ...parameters,
     externalNodeModules: config.externalNodeModules,
@@ -50,7 +53,20 @@ const getSrcFiles = async function ({ config, ...parameters }) {
   return paths
 }
 
-const getSrcFilesAndExternalModules = async function ({
+interface GetSrcFilesAndExternalModulesConfig {
+  bundler: string
+  externalNodeModules?: string[]
+  includedFiles?: string[]
+  includedFilesBasePath?: string
+  featureFlags: Record<string, boolean>
+  srcPath: string
+  mainFile: string
+  srcDir: string
+  stat: Stats
+  pluginsModulesPath?: string
+}
+
+export const getSrcFilesAndExternalModules = async function ({
   bundler,
   externalNodeModules = [],
   featureFlags,
@@ -61,7 +77,7 @@ const getSrcFilesAndExternalModules = async function ({
   srcDir,
   srcPath,
   stat,
-}) {
+}: GetSrcFilesAndExternalModulesConfig) {
   const includedFilePaths = await getPathsOfIncludedFiles(includedFiles, includedFilesBasePath)
 
   if (bundler === JS_BUNDLER_ZISI) {
@@ -95,5 +111,3 @@ const getSrcFilesAndExternalModules = async function ({
     paths: [mainFile, ...includedFilePaths],
   }
 }
-
-module.exports = { getSrcFiles, getSrcFilesAndExternalModules }
