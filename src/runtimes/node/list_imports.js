@@ -1,3 +1,5 @@
+const { extname } = require('path')
+
 const esbuild = require('@netlify/esbuild')
 const isBuiltinModule = require('is-builtin-module')
 const { tmpName } = require('tmp-promise')
@@ -9,9 +11,22 @@ const { safeUnlink } = require('../../utils/fs')
 // sent in the Go<>Node IPC channel.
 const ESBUILD_LOG_LIMIT = 10
 
+// List of extensions that we can `require` from a function.
+const supportedLoaders = new Set(['.cjs', '.js', '.json', '.mjs'])
+
 const getListImportsPlugin = ({ imports, path }) => ({
   name: 'list-imports',
   setup(build) {
+    build.onLoad({ filter: /.*/ }, (args) => {
+      const isSupportedLoader = supportedLoaders.has(extname(args.path))
+
+      // If this is a `require` call for a file we can't include, we return an
+      // empty file so that esbuild doesn't throw an error.
+      if (!isSupportedLoader) {
+        return { contents: '' }
+      }
+    })
+
     build.onResolve({ filter: /.*/ }, (args) => {
       const isEntryPoint = args.path === path
       const isImport = !isEntryPoint && !isBuiltinModule(args.path)
