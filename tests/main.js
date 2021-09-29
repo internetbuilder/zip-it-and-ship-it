@@ -1988,22 +1988,18 @@ testBundlers('Correctly follows node_modules via symlink', [ESBUILD, ESBUILD_ZIS
   t.is(isEven(10), '10 is even')
 })
 
-testBundlers(
-  'Does not throw when the function is including a file with an unsupported extension',
-  [DEFAULT],
-  async (bundler, t) => {
-    const { tmpDir } = await zipNode(t, `node-unsupported-loader`, {
-      opts: { config: { '*': { nodeBundler: bundler } }, featureFlags: { parseWithEsbuild: true } },
-    })
+test('Does not throw when the function is including a file with an unsupported extension', async (t) => {
+  const { tmpDir } = await zipNode(t, `node-unsupported-loader`, {
+    opts: { config: { '*': { nodeBundler: DEFAULT } }, featureFlags: { parseWithEsbuild: true } },
+  })
 
-    // eslint-disable-next-line import/no-dynamic-require, node/global-require
-    const { html, sideFiles } = require(`${tmpDir}/function.js`)
+  // eslint-disable-next-line import/no-dynamic-require, node/global-require
+  const { html, sideFiles } = require(`${tmpDir}/function.js`)
 
-    t.is(html, 404)
+  t.is(html, 404)
 
-    // eslint-disable-next-line no-magic-numbers
-    t.is(sideFiles.length, 4)
+  // eslint-disable-next-line no-magic-numbers
+  t.is(sideFiles.length, 4)
 
-    sideFiles.every((sideFile) => t.true(sideFile))
-  },
-)
+  sideFiles.every((sideFile) => t.true(sideFile))
+})
