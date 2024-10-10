@@ -60,7 +60,7 @@
     "array-flat-polyfill": "^1.0.1",
     "common-path-prefix": "^3.0.0",
     "cp-file": "^9.0.0",
-    "del": "^6.0.0",
+    "del": "^8.0.0",
     "elf-cam": "^0.1.1",
     "end-of-stream": "^1.4.4",
     "es-module-lexer": "^0.9.0",
